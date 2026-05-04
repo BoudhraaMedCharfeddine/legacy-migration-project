@@ -25,6 +25,9 @@ class Product
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: "products")]
     private $user;
 
+    #[ORM\ManyToOne(targetEntity: Category::class, inversedBy: "products")]
+    private $category;
+
     // getters and setters
     public function getId(): ?int
     {
@@ -75,6 +78,18 @@ class Product
     public function setUser(?User $user): self
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getCategory(): ?Category
+    {
+        return $this->category;
+    }
+
+    public function setCategory(?Category $category): self
+    {
+        $this->category = $category;
 
         return $this;
     }

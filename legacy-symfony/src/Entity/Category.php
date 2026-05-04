@@ -5,8 +5,8 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
-#[ORM\Table(name: "users")]
-class User
+#[ORM\Table(name: "categories")]
+class Category
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -16,19 +16,15 @@ class User
     #[ORM\Column(type: "string", length: 255)]
     private $name;
 
-    #[ORM\Column(type: "string", length: 255, unique: true)]
-    private $email;
+    #[ORM\Column(type: "text", nullable: true)]
+    private $description;
 
-    #[ORM\OneToMany(targetEntity: Product::class, mappedBy: "user")]
+    #[ORM\OneToMany(targetEntity: Product::class, mappedBy: "category")]
     private $products;
-
-    #[ORM\OneToMany(targetEntity: Order::class, mappedBy: "user")]
-    private $orders;
 
     public function __construct()
     {
         $this->products = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->orders = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     // getters and setters
@@ -49,14 +45,14 @@ class User
         return $this;
     }
 
-    public function getEmail(): ?string
+    public function getDescription(): ?string
     {
-        return $this->email;
+        return $this->description;
     }
 
-    public function setEmail(string $email): self
+    public function setDescription(?string $description): self
     {
-        $this->email = $email;
+        $this->description = $description;
 
         return $this;
     }
@@ -64,10 +60,5 @@ class User
     public function getProducts()
     {
         return $this->products;
-    }
-
-    public function getOrders()
-    {
-        return $this->orders;
     }
 }

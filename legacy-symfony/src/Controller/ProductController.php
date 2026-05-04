@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Product;
 use App\Entity\User;
+use App\Entity\Category;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -31,6 +32,10 @@ class ProductController extends AbstractController
             $user = $entityManager->getRepository(User::class)->find($data['user_id']);
             $product->setUser($user);
         }
+        if (isset($data['category_id'])) {
+            $category = $entityManager->getRepository(Category::class)->find($data['category_id']);
+            $product->setCategory($category);
+        }
         $entityManager->persist($product);
         $entityManager->flush();
         return $this->json($product, 201);
@@ -52,6 +57,10 @@ class ProductController extends AbstractController
         if (isset($data['user_id'])) {
             $user = $entityManager->getRepository(User::class)->find($data['user_id']);
             $product->setUser($user);
+        }
+        if (isset($data['category_id'])) {
+            $category = $entityManager->getRepository(Category::class)->find($data['category_id']);
+            $product->setCategory($category);
         }
         $entityManager->flush();
         return $this->json($product);
