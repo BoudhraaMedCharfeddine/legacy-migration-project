@@ -3,15 +3,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Order } from './entities/order.entity';
 import { OrdersService } from './orders.service';
 import { OrdersController } from './orders.controller';
-import { UsersModule } from '../users/users.module';
+import { PaymentCreatedListener } from './listeners/payment-created.listener';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Order]),
-    UsersModule,
-  ],
+  imports: [TypeOrmModule.forFeature([Order])],
   controllers: [OrdersController],
-  providers: [OrdersService],
-  exports: [OrdersService, TypeOrmModule],
+  providers: [OrdersService, PaymentCreatedListener],
+  exports: [OrdersService],
 })
 export class OrdersModule {}
