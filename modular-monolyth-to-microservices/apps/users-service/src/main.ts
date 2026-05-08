@@ -1,14 +1,19 @@
 import { NestFactory } from '@nestjs/core';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { AppModule } from './app.module';
+import { QUEUES } from '@app/shared';
 
 async function bootstrap() {
-  const port = parseInt(process.env.USERS_SERVICE_PORT ?? '3001', 10);
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
-    transport: Transport.TCP,
-    options: { host: '0.0.0.0', port },
+    transport: Transport.RMQ,
+    options: {
+      urls: [process.env.RABBITMQ_URL ?? 'amqp://localhost:5672'],
+      queue: QUEUES.USERS,
+      queueOptions: { durable: true },
+      noAck: false,
+    },
   });
   await app.listen();
-  console.log(`Users Service listening on TCP port ${port}`);
+  console.log(`Users Service connected to RabbitMQ — queue: ${QUEUES.USERS}`);
 }
 bootstrap();

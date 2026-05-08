@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CategoriesController } from './categories.controller';
-import { CATEGORIES_SERVICE } from '@app/shared';
+import { CATEGORIES_SERVICE, QUEUES } from '@app/shared';
 
 @Module({
   imports: [
@@ -11,10 +11,11 @@ import { CATEGORIES_SERVICE } from '@app/shared';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (cfg: ConfigService) => ({
-        transport: Transport.TCP,
+        transport: Transport.RMQ,
         options: {
-          host: cfg.get('CATEGORIES_SERVICE_HOST', '127.0.0.1'),
-          port: cfg.get<number>('CATEGORIES_SERVICE_PORT', 3002),
+          urls: [cfg.get<string>('RABBITMQ_URL', 'amqp://localhost:5672')],
+          queue: QUEUES.CATEGORIES,
+          queueOptions: { durable: true },
         },
       }),
     }]),

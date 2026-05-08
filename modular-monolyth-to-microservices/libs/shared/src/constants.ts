@@ -36,8 +36,14 @@ export const MSG = {
   PAYMENTS_DELETE:      { cmd: 'payments_delete' },
 } as const;
 
-// Inter-service events (fire-and-forget)
-// Replace with Kafka/RabbitMQ topic names when migrating to a message broker
 export const EVT = {
   PAYMENT_CREATED: 'payment.created',
+} as const;
+
+export const QUEUES = {
+  USERS:      'users_queue',
+  CATEGORIES: 'categories_queue',
+  PRODUCTS:   'products_queue',
+  ORDERS:     'orders_queue',
+  PAYMENTS:   'payments_queue',
 } as const;

@@ -5,7 +5,7 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
 import { Payment } from './entities/payment.entity';
 import { PaymentsController } from './payments.controller';
 import { PaymentsService } from './payments.service';
-import { ORDERS_SERVICE } from '@app/shared';
+import { ORDERS_SERVICE, QUEUES } from '@app/shared';
 
 @Module({
   imports: [
@@ -21,15 +21,16 @@ import { ORDERS_SERVICE } from '@app/shared';
       }),
     }),
     TypeOrmModule.forFeature([Payment]),
-    // TCP client to emit payment.created events to orders-service
     ClientsModule.registerAsync([{
       name: ORDERS_SERVICE,
+      imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (cfg: ConfigService) => ({
-        transport: Transport.TCP,
+        transport: Transport.RMQ,
         options: {
-          host: cfg.get('ORDERS_SERVICE_HOST', '127.0.0.1'),
-          port: cfg.get<number>('ORDERS_SERVICE_PORT', 3004),
+          urls: [cfg.get<string>('RABBITMQ_URL', 'amqp://localhost:5672')],
+          queue: QUEUES.ORDERS,
+          queueOptions: { durable: true },
         },
       }),
     }]),
