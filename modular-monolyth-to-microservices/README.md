@@ -102,10 +102,41 @@ QUEUES.ORDERS           // 'orders_queue'
 
 ---
 
+## Docker images
+
+Each service has its own `Dockerfile` (multi-stage build). The build context must always be the **monorepo root** because all services share `libs/shared/` and the root `tsconfig.json`.
+
+```bash
+# Build individual images
+docker build -f apps/api-gateway/Dockerfile        -t api-gateway:latest        .
+docker build -f apps/users-service/Dockerfile      -t users-service:latest      .
+docker build -f apps/categories-service/Dockerfile -t categories-service:latest .
+docker build -f apps/products-service/Dockerfile   -t products-service:latest   .
+docker build -f apps/orders-service/Dockerfile     -t orders-service:latest     .
+docker build -f apps/payments-service/Dockerfile   -t payments-service:latest   .
+```
+
+Each Dockerfile follows the same two-stage pattern:
+
+| Stage | Base image | What it does |
+|-------|-----------|--------------|
+| `builder` | `node:20-alpine` + build tools | Installs all deps, compiles the service with `nest build` |
+| `runner` | `node:20-alpine` | Copies only the compiled `dist/` and `node_modules` |
+
+> `better-sqlite3` is a native module — the `builder` stage installs `python3 make g++` via `apk` so the `.node` binary compiles correctly. Both stages use the same Alpine base to ensure ABI compatibility.
+
+### Kubernetes notes
+
+- The **api-gateway** is the only service that exposes an HTTP port (`3000`). Microservices connect outbound to RabbitMQ — no `EXPOSE` needed.
+- `RABBITMQ_URL` and `DATABASE_PATH` are injected as environment variables at runtime (ConfigMap / Secret in K8s).
+- Until each service gets its own database, the SQLite file must be mounted as a shared `PersistentVolumeClaim` across all service pods.
+
+---
+
 ## Prerequisites
 
 - Node.js 20+
-- Docker (for RabbitMQ)
+- Docker (for RabbitMQ and image builds)
 - The legacy SQLite database at `../legacy-symfony/var/data.db`
 
 ---
