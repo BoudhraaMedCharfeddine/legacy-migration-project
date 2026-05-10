@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: microservices
+data:
+  # RabbitMQ — service name resolves inside the cluster
+  RABBITMQ_URL: "amqp://guest:guest@rabbitmq:5672"
+  # SQLite — mounted via PVC at /data in every pod
+  DATABASE_PATH: "/data/data.db"
+  # API Gateway HTTP port
+  PORT: "3000"

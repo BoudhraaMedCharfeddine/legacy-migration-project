@@ -1,0 +1,14 @@
+# hostPath PV for local clusters (Minikube / kind).
+# For production, replace with a cloud PV (AWS EFS, Azure File, NFS, …) that supports ReadWriteMany.
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: sqlite-pv
+spec:
+  capacity:
+    storage: 500Mi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  hostPath:
+    path: /data/legacy-sqlite   # populate with the SQLite file before deploying (see README)

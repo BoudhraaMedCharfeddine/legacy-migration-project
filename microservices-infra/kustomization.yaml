@@ -1,0 +1,17 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - namespace.yaml
+  - configmap.yaml
+  - sqlite/persistent-volume.yaml
+  - sqlite/persistent-volume-claim.yaml
+  - rabbitmq/deployment.yaml
+  - rabbitmq/service.yaml
+  - api-gateway/deployment.yaml
+  - api-gateway/service.yaml
+  - users-service/deployment.yaml
+  - categories-service/deployment.yaml
+  - products-service/deployment.yaml
+  - orders-service/deployment.yaml
+  - payments-service/deployment.yaml

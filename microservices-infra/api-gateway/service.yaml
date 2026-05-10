@@ -1,0 +1,15 @@
+# NodePort exposes the gateway on the Minikube host.
+# For production, switch type to LoadBalancer or use an Ingress controller.
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-gateway
+  namespace: microservices
+spec:
+  type: NodePort
+  selector:
+    app: api-gateway
+  ports:
+    - port: 3000
+      targetPort: 3000
+      nodePort: 30000
